@@ -1,0 +1,8 @@
+Mutation 0.5
+xOver 1.5
+Encode 0.5
+Fitness 2
+Selection 1
+Decode 0.5
+Total benefit 1
+Valid Solution 

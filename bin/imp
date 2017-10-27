@@ -1,0 +1,172 @@
+import java.util.ArrayList;
+import java.util.Random;
+
+public class CanonicalGA {
+	private ArrayList<Solution> population;
+	private ArrayList<Item> items;
+	private int sizeOfKS;
+	private final double P_MUTAION = 0.01;
+	private final double P_COSSOVER = 0.68;
+	private final int POPULATION_SIZE = 5000;
+
+	public CanonicalGA(ArrayList<Item> items, int sizeOfKS) {
+		population = new ArrayList<>();
+		this.items = items;
+		this.sizeOfKS = sizeOfKS;
+	}
+
+	private Solution getBest(int sizeOfKS) {
+		Solution best = new Solution(0, population.get(0).getChromosome());
+		for (Solution sol : population) {
+			if (sol.getFitness() > best.getFitness())
+				best = sol;
+		}
+		return best;
+
+	}
+
+	public void generatePopulation() {
+
+		for (int i = 0; i < POPULATION_SIZE; i++) {
+
+			Random randGenerator = new Random();
+			String temp = "";
+			for (int j = 0; j < items.size(); j++) {
+				if (randGenerator.nextDouble() <= 0.5) {
+					temp += '1';
+				} else
+					temp += '0';
+			}
+			if(!isValid(temp)) {
+				i--;
+				continue;
+			}
+			population.add(new Solution(0, temp));
+		}
+	}
+
+	public Solution solve() {
+		int numOfTrials = 1;
+		generatePopulation();
+		while (numOfTrials-- > 0) {
+			calculateFitness();
+			int[] rouletteWheel = getRouletteWheel();
+			ArrayList<Solution> selectedSol = select(rouletteWheel);
+			ArrayList<Solution> springOff = Xover(selectedSol);
+			ArrayList<Solution> mutated = mutate(springOff);
+			replace(mutated);
+		}
+		calculateFitness();
+		return getBest(sizeOfKS);
+	}
+
+	public void calculateFitness() {
+
+		for (int i = 0; i < population.size(); i++) {
+			String solution = population.get(i).getChromosome();
+			int fitness = 0, weight = 0, value = 0;
+			for (int j = 0; j < solution.length(); j++) {
+				fitness += items.get(j).getValue() * (solution.charAt(j) - '0') / items.get(j).getWeight();
+				weight += items.get(j).getWeight() * (solution.charAt(j) - '0');
+				value += items.get(j).getValue() * (solution.charAt(j) - '0');
+			}
+
+			population.get(i).setValue(value);
+			population.get(i).setWeight(weight);
+			population.get(i).setFitness((weight > sizeOfKS ? 1 : fitness));
+		}
+
+	}
+
+	public int[] getRouletteWheel() {
+		int[] rouletteWheel = new int[population.size()];
+		int cumulativeFitness = 0;
+		for (int i = 0; i < population.size(); i++) {
+			cumulativeFitness += population.get(i).getFitness();
+			rouletteWheel[i] = cumulativeFitness;
+		}
+		return rouletteWheel;
+	}
+
+	public ArrayList<Solution> select(int[] roletteWheel) {
+		ArrayList<Solution> selectedSols = new ArrayList<>();
+		int maxFitness = roletteWheel[population.size() - 1];
+		Random randGenerator = new Random();
+		for (int i = 0; i < population.size(); i++) {
+			int r = randGenerator.nextInt(maxFitness);
+			r = (r == 0 ? 1 : r);
+			for (int j = 0; j < roletteWheel.length; j++) {
+				if (r < roletteWheel[j] && (j == 0 || r > roletteWheel[j - 1])) {
+					selectedSols.add(population.get(j));
+					break;
+				}
+			}
+		}
+		return selectedSols;
+	}
+
+	public ArrayList<Solution> Xover(ArrayList<Solution> selectedSol) {
+		ArrayList<Solution> offSpring = new ArrayList<>();
+		for (int i = 0; i < selectedSol.size() - 1; i += 2) {
+			int chromosomeSize = selectedSol.get(i).getChromosome().length();
+			Random randGenerator = new Random();
+			int x = randGenerator.nextInt(chromosomeSize);
+			double r = randGenerator.nextDouble();
+			if (r < P_COSSOVER)
+				continue;
+			x = (x == 0 ? 1 : x);
+			String child1 = "", child2 = "";
+			for (int j = 0; j < x; j++) {
+				child1 += selectedSol.get(i).getChromosome().charAt(j);
+				child2 += selectedSol.get(i + 1).getChromosome().charAt(j);
+			}
+			for (int j = x; j < chromosomeSize; j++) {
+				child1 += selectedSol.get(i + 1).getChromosome().charAt(j);
+				child2 += selectedSol.get(i).getChromosome().charAt(j);
+			}
+			if(!isValid(child1)||!isValid(child2)) {
+				i-=2;
+				continue;
+			}
+			offSpring.add(new Solution(0, child1));
+			offSpring.add(new Solution(0, child2));
+		}
+		return offSpring;
+	}
+
+	private boolean isValid(String child1) {
+		int weight =0 ;
+		for(int i=0;i<items.size();i++) {
+			weight += items.get(i).getWeight() * (child1.charAt(i)-'0');
+		}
+		return weight < sizeOfKS;
+	}
+
+	public ArrayList<Solution> mutate(ArrayList<Solution> springOff) {
+		for (int i = 0; i < springOff.size(); i++) {
+			Random randGenerator = new Random();
+			String Chromosome = springOff.get(i).getChromosome();
+			String tmp = "";
+			for (int j = 0; j < Chromosome.length(); j++) {
+				double r = randGenerator.nextDouble();
+
+				if (r <= P_MUTAION) {
+					tmp += (Chromosome.charAt(j) == '1') ? '0' : '1';
+				} else
+					tmp += Chromosome.charAt(j);
+			}
+			if(!isValid(tmp)) {
+				i--;
+				continue;
+			}
+			springOff.get(i).setChromosome(tmp);
+
+		}
+		return springOff;
+	}
+
+	public void replace(ArrayList<Solution> mutated) {
+		population = mutated;
+	}
+}
+

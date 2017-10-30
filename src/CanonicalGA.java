@@ -7,10 +7,10 @@ public class CanonicalGA extends GA {
 		super(items, sizeOfKS);
 	}
 	
-	protected boolean isValid(String child) {
+	protected boolean isValid(ArrayList<Double> temp) {
 		int weight =0 ;
 		for(int i=0;i<items.size();i++) {
-			weight += items.get(i).getWeight() * (child.charAt(i)-'0');
+			weight += items.get(i).getWeight() * temp.get(i);
 		}
 		return weight <= sizeOfKS;
 	}
@@ -30,12 +30,12 @@ public class CanonicalGA extends GA {
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 
 			Random randGenerator = new Random();
-			String temp = "";
+			ArrayList<Double> temp = new ArrayList<Double>();
 			for (int j = 0; j < items.size(); j++) {
 				if (randGenerator.nextDouble() <= 0.5) {
-					temp += '1';
+					temp.add(1.0);
 				} else
-					temp += '0';
+					temp.add(0.0);
 			}
 			if(!isValid(temp)) {
 				i--;
@@ -64,11 +64,11 @@ public class CanonicalGA extends GA {
 	protected void calculateFitness() {
 
 		for (int i = 0; i < population.size(); i++) {
-			String solution = population.get(i).getChromosome();
+			ArrayList<Double> solution = population.get(i).getChromosome();
 			double fitness = 0;
 			int weight = 0, value = 0, numOfItems = 0;
-			for (int j = 0; j < solution.length(); j++) {
-				int bit = solution.charAt(j) - '0';
+			for (int j = 0; j < solution.size(); j++) {
+				double bit = solution.get(j);
 				fitness += items.get(j).getValue() * bit/items.get(j).getWeight()*1.0;
 				weight += items.get(j).getWeight() * bit;
 				value += items.get(j).getValue() * bit;
@@ -112,7 +112,7 @@ public class CanonicalGA extends GA {
 	protected ArrayList<Solution> Xover(ArrayList<Solution> selectedSol) {
 		ArrayList<Solution> offSpring = new ArrayList<>();
 		for (int i = 0; i < selectedSol.size() - 1; i += 2) {
-			int chromosomeSize = selectedSol.get(i).getChromosome().length();
+			int chromosomeSize = selectedSol.get(i).getChromosome().size();
 			Random randGenerator = new Random();
 			int x = randGenerator.nextInt(chromosomeSize);
 			double r = randGenerator.nextDouble();
@@ -122,14 +122,15 @@ public class CanonicalGA extends GA {
 				continue;
 			}
 			x = (x == 0 ? 1 : x);
-			String child1 = "", child2 = "";
+			ArrayList<Double> child1 = new ArrayList<Double>();
+			ArrayList<Double> child2 = new ArrayList<Double>();
 			for (int j = 0; j < x; j++) {
-				child1 += selectedSol.get(i).getChromosome().charAt(j);
-				child2 += selectedSol.get(i + 1).getChromosome().charAt(j);
+				child1.add(selectedSol.get(i).getChromosome().get(j));
+				child2.add(selectedSol.get(i + 1).getChromosome().get(j));
 			}
 			for (int j = x; j < chromosomeSize; j++) {
-				child1 += selectedSol.get(i + 1).getChromosome().charAt(j);
-				child2 += selectedSol.get(i).getChromosome().charAt(j);
+				child1.add(selectedSol.get(i + 1).getChromosome().get(j));
+				child2.add(selectedSol.get(i).getChromosome().get(j));
 			}
 			if(!isValid(child1)||!isValid(child2)) {
 				i-=2;
@@ -144,15 +145,15 @@ public class CanonicalGA extends GA {
 	protected ArrayList<Solution> mutate(ArrayList<Solution> offSpring) {
 		for (int i = 0; i < offSpring.size(); i++) {
 			Random randGenerator = new Random();
-			String Chromosome = offSpring.get(i).getChromosome();
-			String tmp = "";
-			for (int j = 0; j < Chromosome.length(); j++) {
+			ArrayList<Double> Chromosome = offSpring.get(i).getChromosome();
+			ArrayList<Double> tmp = new ArrayList<Double>();
+			for (int j = 0; j < Chromosome.size(); j++) {
 				double r = randGenerator.nextDouble();
 
 				if (r <= P_MUTAION) {
-					tmp += (Chromosome.charAt(j) == '1') ? '0' : '1';
+					tmp.add((Chromosome.get(j) == 1.0) ? 0.0 : 1.0);
 				} else
-					tmp += Chromosome.charAt(j);
+					tmp.add(Chromosome.get(j));
 			}
 			if(!isValid(tmp)) {
 				i--;

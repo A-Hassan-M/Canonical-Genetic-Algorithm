@@ -1,7 +1,8 @@
+import java.util.ArrayList;
 
 public class Solution {
 	private double fitness;
-	private String chromosome;
+	private ArrayList<Double> chromosome;
 	private int value;
 	private int weight;
 	int numOfItems;
@@ -11,7 +12,7 @@ public class Solution {
 		value = 0;
 		weight = 0;
 	}
-	public Solution(double fitness, String chromosome) {
+	public Solution(double fitness, ArrayList<Double> chromosome) {
 		this.fitness = fitness;
 		this.chromosome = chromosome;
 	}
@@ -20,7 +21,7 @@ public class Solution {
 	public void setFitness(double fitness) {
 		this.fitness = fitness;
 	}
-	public void setChromosome(String chromosome) {
+	public void setChromosome(ArrayList<Double> chromosome) {
 		this.chromosome = chromosome;
 	}
 	public void setValue(int value) {
@@ -34,7 +35,7 @@ public class Solution {
 	public double getFitness() {
 		return fitness;
 	}
-	public String getChromosome() {
+	public ArrayList<Double> getChromosome() {
 		return chromosome;
 	}
 	public int getValue() {

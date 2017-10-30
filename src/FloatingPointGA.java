@@ -4,11 +4,10 @@ public class FloatingPointGA extends GA {
 
 	public FloatingPointGA(ArrayList<Item> items, int sizeOfKS) {
 		super(items, sizeOfKS);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
-	protected boolean isValid(String child) {
+	protected boolean isValid(ArrayList<Double> child) {
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -27,7 +26,6 @@ public class FloatingPointGA extends GA {
 
 	@Override
 	protected void calculateFitness() {
-		// TODO Auto-generated method stub
 		
 	}
 
@@ -60,5 +58,5 @@ public class FloatingPointGA extends GA {
 		// TODO Auto-generated method stub
 		
 	}
-	
+
 }

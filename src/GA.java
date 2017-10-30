@@ -15,7 +15,7 @@ public abstract class GA {
 		this.sizeOfKS = sizeOfKS;
 	}
 	
-	protected abstract boolean isValid(String child) ;
+	protected abstract boolean isValid(ArrayList<Double> child) ;
 
 	protected abstract Solution getBest() ;
 

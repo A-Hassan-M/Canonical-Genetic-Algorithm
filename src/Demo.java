@@ -26,7 +26,7 @@ public class Demo {
 			Solution solution = CGA.solve();
 			System.out.println("Case: " + c + ' ' + solution.getValue()+'\n'+solution.numOfItems);
 			for(int i=0;i<items.size();i++) {
-				if(solution.getChromosome().charAt(i) == '1')
+				if(solution.getChromosome().get(i) == 1.0)
 					System.out.println(items.get(i).toString());
 			}
 		}

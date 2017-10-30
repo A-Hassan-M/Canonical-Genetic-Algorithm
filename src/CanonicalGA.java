@@ -1,22 +1,13 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-public class CanonicalGA {
-	private ArrayList<Solution> population;
-	private ArrayList<Item> items;
-	private int sizeOfKS;
-	private final double P_MUTAION = 0.01;
-	private final double P_COSSOVER = 0.64;
-	private final int POPULATION_SIZE = 1000;
-	private final int GENERATION_SIZE = 700;
-
+public class CanonicalGA extends GA {
+	
 	public CanonicalGA(ArrayList<Item> items, int sizeOfKS) {
-		population = new ArrayList<>();
-		this.items = items;
-		this.sizeOfKS = sizeOfKS;
+		super(items, sizeOfKS);
 	}
 	
-	private boolean isValid(String child) {
+	protected boolean isValid(String child) {
 		int weight =0 ;
 		for(int i=0;i<items.size();i++) {
 			weight += items.get(i).getWeight() * (child.charAt(i)-'0');
@@ -24,7 +15,7 @@ public class CanonicalGA {
 		return weight <= sizeOfKS;
 	}
 
-	private Solution getBest() {
+	protected Solution getBest() {
 		Solution best = population.get(0);
 		for (Solution sol : population) {
 			if (sol.getFitness() >= best.getFitness() && sol.getWeight() <= sizeOfKS)
@@ -34,7 +25,7 @@ public class CanonicalGA {
 
 	}
 
-	public void generatePopulation() {
+	protected void generatePopulation() {
 
 		for (int i = 0; i < POPULATION_SIZE; i++) {
 
@@ -70,7 +61,7 @@ public class CanonicalGA {
 		return getBest();
 	}
 
-	public void calculateFitness() {
+	protected void calculateFitness() {
 
 		for (int i = 0; i < population.size(); i++) {
 			String solution = population.get(i).getChromosome();
@@ -92,7 +83,7 @@ public class CanonicalGA {
 
 	}
 
-	public double[] getRouletteWheel() {
+	protected double[] getRouletteWheel() {
 		double[] rouletteWheel = new double[population.size()];
 		double cumulativeFitness = 0;
 		for (int i = 0; i < population.size(); i++) {
@@ -102,7 +93,7 @@ public class CanonicalGA {
 		return rouletteWheel;
 	}
 
-	public ArrayList<Solution> select(double[] rouletteWheel) {
+	protected ArrayList<Solution> select(double[] rouletteWheel) {
 		ArrayList<Solution> selectedSols = new ArrayList<>();
 		double maxFitness = rouletteWheel[population.size() - 1];
 		Random randGenerator = new Random();
@@ -118,7 +109,7 @@ public class CanonicalGA {
 		return selectedSols;
 	}
 
-	public ArrayList<Solution> Xover(ArrayList<Solution> selectedSol) {
+	protected ArrayList<Solution> Xover(ArrayList<Solution> selectedSol) {
 		ArrayList<Solution> offSpring = new ArrayList<>();
 		for (int i = 0; i < selectedSol.size() - 1; i += 2) {
 			int chromosomeSize = selectedSol.get(i).getChromosome().length();
@@ -150,7 +141,7 @@ public class CanonicalGA {
 		return offSpring;
 	}
 
-	public ArrayList<Solution> mutate(ArrayList<Solution> offSpring) {
+	protected ArrayList<Solution> mutate(ArrayList<Solution> offSpring) {
 		for (int i = 0; i < offSpring.size(); i++) {
 			Random randGenerator = new Random();
 			String Chromosome = offSpring.get(i).getChromosome();
@@ -173,7 +164,7 @@ public class CanonicalGA {
 		return offSpring;
 	}
 
-	public void replace(ArrayList<Solution> mutated) {
+	protected void replace(ArrayList<Solution> mutated) {
 		population = mutated;
 	}
 }

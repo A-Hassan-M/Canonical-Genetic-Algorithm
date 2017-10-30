@@ -3,14 +3,10 @@ import java.util.ArrayList;
 public class Solution {
 	private double fitness;
 	private ArrayList<Double> chromosome;
-	private int value;
-	private int weight;
-	int numOfItems;
+	private double error;
 	
 	
 	public Solution(){
-		value = 0;
-		weight = 0;
 	}
 	public Solution(double fitness, ArrayList<Double> chromosome) {
 		this.fitness = fitness;
@@ -24,11 +20,8 @@ public class Solution {
 	public void setChromosome(ArrayList<Double> chromosome) {
 		this.chromosome = chromosome;
 	}
-	public void setValue(int value) {
-		this.value = value;
-	}
-	public void setWeight(int weight) {
-		this.weight = weight;
+	public void setError(double error) {
+		this.error = error;
 	}
 	
 	//Getters
@@ -38,11 +31,8 @@ public class Solution {
 	public ArrayList<Double> getChromosome() {
 		return chromosome;
 	}
-	public int getValue() {
-		return value;
-	}
-	public int getWeight() {
-		return weight;
+	public double getError() {
+		return error;
 	}
 
 }

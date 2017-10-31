@@ -107,7 +107,22 @@ public class FloatingPointGA{
 	
 	private void replace(ArrayList<Solution> mutated) {
 		// TODO Auto-generated method stub
-		
+		Solution best = population.get(0);
+		int location = 0;
+		for (int i = 0; i < POPULATION_SIZE; i++)
+			if (population.get(i).getFitness() > best.getFitness()){
+				best = population.get(i);
+				location = i;
+			}
+		for(int i=0;i<mutated.size();i++){
+			if(mutated.get(i).getFitness()> best.getFitness()){
+				population.set(location,mutated.get(i));
+				break;
+			}
+		}
+
+
+
 	}
 
 }

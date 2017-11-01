@@ -64,7 +64,7 @@ public class FloatingPointGA{
 			}
 			
 			squareError = (1.0/points.size())*squareError;
-			fitness = 1.0/squareError;
+			fitness = 1.0/(squareError == 0?1:squareError);
 			
 			population.get(i).setFitness(fitness);
 
@@ -96,10 +96,11 @@ public class FloatingPointGA{
 		double maxFitness = rouletteWheel[population.size() - 1];
 		Random randGenerator = new Random();
 		for (int i = 0; i < population.size(); i++) {
-			int r = randGenerator.nextInt((int)maxFitness);
+			double r = maxFitness*randGenerator.nextDouble();
 			for (int j = 0; j < rouletteWheel.length; j++) {
 				if (r <= rouletteWheel[j] && (j == 0 || r > rouletteWheel[j - 1])) {
 					Solution selectedSol = new Solution();
+					
 					selectedSol.setChromosome(population.get(j).getChromosome());
 					selectedSol.setFitness(population.get(j).getFitness());
 					selectedSol.setParentIndex(j);

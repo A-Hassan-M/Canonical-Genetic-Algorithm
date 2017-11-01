@@ -22,10 +22,10 @@ public class FloatingPointGA{
 		while (i++<GENERATION_SIZE) {
 			calculateFitness();
 			double[] rouletteWheel = getRouletteWheel();
-			ArrayList<Solution> selectedSol = select(rouletteWheel);
-			ArrayList<Solution> offSpring = Xover(selectedSol);
-			ArrayList<Solution> mutated = mutate(offSpring);
-			replace(mutated);
+			ArrayList<Solution> selectedSols = select(rouletteWheel);
+			Xover(selectedSols);
+			mutate(selectedSols);
+			replace(selectedSols);
 		}
 		calculateFitness();
 		return getBest();
@@ -66,7 +66,6 @@ public class FloatingPointGA{
 			squareError = (1.0/points.size())*squareError;
 			fitness = 1.0/squareError;
 			
-			population.get(i).setError(squareError);
 			population.get(i).setFitness(fitness);
 
 		}
@@ -82,20 +81,60 @@ public class FloatingPointGA{
 	}
 
 	private double[] getRouletteWheel() {
-		// TODO Auto-generated method stub
-		return null;
+		double[] rouletteWheel = new double[population.size()];
+		double cumulativeFitness = 0;
+		for (int i = 0; i < population.size(); i++) {
+			cumulativeFitness += population.get(i).getFitness();
+			rouletteWheel[i] = cumulativeFitness;
+		}
+		return rouletteWheel;
 	}
 
 	
 	private ArrayList<Solution> select(double[] rouletteWheel) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<Solution> selectedSols = new ArrayList<>();
+		double maxFitness = rouletteWheel[population.size() - 1];
+		Random randGenerator = new Random();
+		for (int i = 0; i < population.size(); i++) {
+			int r = randGenerator.nextInt((int)maxFitness);
+			for (int j = 0; j < rouletteWheel.length; j++) {
+				if (r <= rouletteWheel[j] && (j == 0 || r > rouletteWheel[j - 1])) {
+					Solution selectedSol = new Solution();
+					selectedSol.setChromosome(population.get(j).getChromosome());
+					selectedSol.setFitness(population.get(j).getFitness());
+					selectedSol.setParentIndex(j);
+					selectedSols.add(selectedSol);
+					break;
+				}
+			}
+		}
+		return selectedSols;
 	}
 
 	
-	private ArrayList<Solution> Xover(ArrayList<Solution> selectedSol) {
-		// TODO Auto-generated method stub
-		return null;
+	private ArrayList<Solution> Xover(ArrayList<Solution> selectedSols) {
+		for (int i = 0; i < selectedSols.size() - 1; i += 2) {
+			int chromosomeSize = selectedSols.get(i).getChromosome().size();
+			Random randGenerator = new Random();
+			int x = randGenerator.nextInt(chromosomeSize);
+			double r = randGenerator.nextDouble();
+			if (r >= P_COSSOVER) {
+				continue;
+			}
+			x = (x == 0 ? 1 : x);
+			ArrayList<Double> child1 = new ArrayList<Double>();
+			ArrayList<Double> child2 = new ArrayList<Double>();
+			for (int j = 0; j < chromosomeSize; j++) {
+				if(j<x) {
+					child1.add(selectedSols.get(j<x ?i:i+1).getChromosome().get(j));
+					child2.add(selectedSols.get(j<x ?i+1:i).getChromosome().get(j));
+				}
+			}
+			
+			selectedSols.get(i).setChromosome(child1);
+			selectedSols.get(i+1).setChromosome(child2);
+		}
+		return selectedSols;
 	}
 
 	

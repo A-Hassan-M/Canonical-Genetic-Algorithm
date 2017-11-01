@@ -3,10 +3,11 @@ import java.util.ArrayList;
 public class Solution {
 	private double fitness;
 	private ArrayList<Double> chromosome;
-	private double error;
+	private int parentIndex;
 	
 	
 	public Solution(){
+		parentIndex = -1;
 	}
 	public Solution(double fitness, ArrayList<Double> chromosome) {
 		this.fitness = fitness;
@@ -20,8 +21,8 @@ public class Solution {
 	public void setChromosome(ArrayList<Double> chromosome) {
 		this.chromosome = chromosome;
 	}
-	public void setError(double error) {
-		this.error = error;
+	public void setParentIndex(int parentIndex) {
+		this.parentIndex = parentIndex;
 	}
 	
 	//Getters
@@ -31,8 +32,8 @@ public class Solution {
 	public ArrayList<Double> getChromosome() {
 		return chromosome;
 	}
-	public double getError() {
-		return error;
+	
+	public int getParentIndex() {
+		return parentIndex;
 	}
-
 }

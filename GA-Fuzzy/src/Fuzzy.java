@@ -81,4 +81,28 @@ public class Fuzzy {
 		}
 	}
 
+	public Point getCentroid(FuzzySet fuzzySet)
+	{
+		double A =0.0;
+		Point point =new Point();
+
+		for (int i = 0; i < fuzzySet.getPoints().size()-1; i++) {
+			Point p1 = fuzzySet.getPoints().get(i);
+			Point p2 = fuzzySet.getPoints().get(i+1);
+			A+=(p1.x*p2.y-p2.x*p1.y);
+		}
+		A*=0.5;
+
+		for (int i = 0; i <fuzzySet.getPoints().size()-1 ; i++) {
+			Point p1 = fuzzySet.getPoints().get(i);
+			Point p2 = fuzzySet.getPoints().get(i+1);
+			point.x+=(p1.x+p2.x)*(p1.x*p2.y-p2.x*p1.y);
+			point.y+=(p1.y+p2.y)*(p1.x*p2.y-p2.x*p1.y);
+		}
+		point.y*=1/(6*A);
+		point.x*=1/(6*A);
+		return  point;
+	}
+
+
 }

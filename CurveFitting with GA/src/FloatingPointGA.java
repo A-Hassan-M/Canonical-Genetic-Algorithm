@@ -103,7 +103,6 @@ public class FloatingPointGA{
 			for (int j = 0; j < rouletteWheel.length; j++) {
 				if (r <= rouletteWheel[j] && (j == 0 || r > rouletteWheel[j - 1])) {
 					Solution selectedSol = new Solution();
-					
 					selectedSol.setChromosome(population.get(j).getChromosome());
 					selectedSol.setFitness(population.get(j).getFitness());
 					selectedSol.setParentIndex(j);
@@ -190,6 +189,5 @@ public class FloatingPointGA{
 //
         }
 	}
-
 
 }

@@ -5,18 +5,19 @@ public class FloatingPointGA{
 	private ArrayList<Solution> population;
 	private ArrayList<Point> points;
 	private int degree;
-	private final double P_MUTAION = 0.01;
-	private final double P_COSSOVER = 0.64;
+	private final double P_MUTAION = 0.001;
+	private final double P_COSSOVER = 0.68;
 	private final int POPULATION_SIZE = 1000;
-	private final int GENERATION_SIZE = 700;
+	private final int GENERATION_SIZE = 200;
 	
 	
 	public FloatingPointGA(ArrayList<Point> points,int degree) {
+	    population = new ArrayList<>();
 		this.points = points;
 		this.degree = degree;
 	}
 	
-	public Solution solve() {
+	public ArrayList<Solution> solve() {
 		int i =0;
 		generatePopulation();
 		while (i++<GENERATION_SIZE) {
@@ -28,13 +29,16 @@ public class FloatingPointGA{
 			replace(selectedSols);
 		}
 		calculateFitness();
-		return getBest();
+		return population;
 	}
 
 	
-	private Solution getBest() {
-		// TODO Auto-generated method stub
-		return null;
+	public Solution getBest() {
+	    Solution best = population.get(0);
+	    for(Solution solution:population)
+            best = solution.getFitness()>best.getFitness()?solution:best;
+
+		return best;
 	}
 
 	
@@ -57,15 +61,14 @@ public class FloatingPointGA{
 		for (int i = 0; i < population.size(); i++) {
 			ArrayList<Double> solution = population.get(i).getChromosome();
 			double fitness = 0, squareError = 0;
-			
+
 			for (int j = 0; j < points.size(); j++) {
 				double hY = func(points.get(j),solution);
-				squareError += (points.get(j).y - hY)*(points.get(j).y - hY);
+				squareError += (hY - points.get(j).y  )*(hY - points.get(j).y );
 			}
 			
-			squareError = (1.0/points.size())*squareError;
+			squareError = (1.0*squareError)/points.size();
 			fitness = 1.0/(squareError == 0?1:squareError);
-			
 			population.get(i).setFitness(fitness);
 
 		}
@@ -126,10 +129,8 @@ public class FloatingPointGA{
 			ArrayList<Double> child1 = new ArrayList<Double>();
 			ArrayList<Double> child2 = new ArrayList<Double>();
 			for (int j = 0; j < chromosomeSize; j++) {
-				if(j<x) {
-					child1.add(selectedSols.get(j<x ?i:i+1).getChromosome().get(j));
-					child2.add(selectedSols.get(j<x ?i+1:i).getChromosome().get(j));
-				}
+				child1.add(selectedSols.get(j<x ?i:i+1).getChromosome().get(j));
+				child2.add(selectedSols.get(j<x ?i+1:i).getChromosome().get(j));
 			}
 			
 			selectedSols.get(i).setChromosome(child1);
@@ -145,20 +146,21 @@ public class FloatingPointGA{
 		for (int i = 0; i < offSpring.size(); i++) {
 			Solution solution = offSpring.get(i);
 			Random randGenerator = new Random();
-			double P = randGenerator.nextDouble();
-			if (P <= P_MUTAION) {
 				for (int j = 0; j < solution.getChromosome().size(); j++) {
-					double x = solution.getChromosome().get(j);
+                    double P = randGenerator.nextDouble();
+                    if (P <= P_MUTAION) {
+				    double x = solution.getChromosome().get(j);
 					double r = randGenerator.nextDouble();
 					double delta, amountOfMutation;
-					int b = 1;
-					double tmp = Math.pow(r, Math.pow((1 - (genration_Num / GENERATION_SIZE)), b));
+					double b = 0.5;
 					if (r >= 0.5) {
-						delta = 10 - x;
+                        double tmp = Math.pow(randGenerator.nextDouble(), Math.pow((1 - (genration_Num*1.0 / GENERATION_SIZE)), b));
+						delta = Math.abs(10 - x);
 						amountOfMutation = delta * (1 - tmp);
 						solution.getChromosome().set(j, solution.getChromosome().get(j) + amountOfMutation);
 					} else {
-						delta = x + 10;
+                        double tmp = Math.pow(randGenerator.nextDouble(), Math.pow((1 - (genration_Num *1.0/ GENERATION_SIZE)), b));
+						delta = Math.abs(x + 10);
 						amountOfMutation = delta * (1 - tmp);
 						solution.getChromosome().set(j, solution.getChromosome().get(j) - amountOfMutation);
 					}
@@ -175,23 +177,19 @@ public class FloatingPointGA{
 
 	
 	private void replace(ArrayList<Solution> mutated) {
-		// TODO Auto-generated method stub
-		Solution best = population.get(0);
-		int location = 0;
-		for (int i = 0; i < POPULATION_SIZE; i++)
-			if (population.get(i).getFitness() > best.getFitness()){
-				best = population.get(i);
-				location = i;
-			}
-		for(int i=0;i<mutated.size();i++){
-			if(mutated.get(i).getFitness()> best.getFitness()){
-				population.set(location,mutated.get(i));
-				break;
-			}
-		}
 
-
-
+//        Solution best = mutated.get(0);
+        for (Solution aMutated : mutated) {
+            if (aMutated.getFitness() >= population.get(aMutated.getParentIndex()).getFitness())
+                population.set(aMutated.getParentIndex(), aMutated);
+//            else
+//                population.set(aMutated.getParentIndex(),aMutated);
+//        }
+//		if(population.get(best.getParentIndex()).getFitness()<best.getFitness())
+//		    population.set(best.getParentIndex(),best);
+//
+        }
 	}
+
 
 }

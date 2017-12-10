@@ -4,7 +4,7 @@ import java.util.Map;
 
 public class InputVariable {
 	String name;
-	float value;
+	double value;
 	ArrayList<FuzzySet> fuzzySets;
 	Map<String , Double> memberShip;
 	InputVariable() {

@@ -24,7 +24,7 @@ Vertical triangle
 LVertical triangle
 90 117 144
 LUpper triangle
-126 157 189
+128 157 189
 LBelow triangle
 171 225 270
 firePosition
@@ -42,9 +42,11 @@ PosSm triangle
 PosMed triangle
 5 15 25
 PosBig triangle
-15 15 30
-4
+15 30 30
+6
 2 position = Left AND angel = RBelow then firePosition = PosSm
 2 angel = RBelow OR position = LeftCenter then firePosition = PosMed
 2 position = Center AND angel = RBelow then firePosition = NegSm
 2 position = Center OR angel = LBelow then firePosition = NegMed
+2 position = LeftCenter OR angel = RBelow then firePosition = PosMed
+2 position = Center AND angel = RBelow then firePosition = PosMed

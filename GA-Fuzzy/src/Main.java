@@ -70,7 +70,7 @@ public class Main {
 //				System.out.println(operand2);
 
 			}
-			System.out.println(sc.next());
+			sc.next();
 			String output = "";
 			for (int k = 0; k < 3; k++)
 				output += sc.next() + " ";
@@ -78,7 +78,7 @@ public class Main {
 //			System.out.println(output);
 			rules.add(rule);
 		}
-		System.out.println("done");
+//		System.out.println("done");
 		
 		Fuzzy sol = new Fuzzy();
 		for(InputVariable input:inputVariables.values()) {
@@ -86,13 +86,13 @@ public class Main {
 		}
 		
 		sol.InferenceOfRules(rules, inputVariables, desiredVariable);
-		
-		for (FuzzySet key : desiredVariable.fuzzySets) {
-			if(desiredVariable.memberShip.get(key.getType())==null) {
-				desiredVariable.memberShip.put(key.getType(),0.0);
-			}
-			System.out.println(desiredVariable.memberShip.get(key.getType()));
+		sol.defuzzify(desiredVariable);
+
+		for (InputVariable input:inputVariables.values()) {
+			System.out.println(input.name+" "+input.memberShip);
 		}
+		System.out.println(desiredVariable.name+" "+desiredVariable.memberShip);
+		System.out.println(desiredVariable.value);
 	}
 
 }
